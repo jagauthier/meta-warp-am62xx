@@ -1,4 +1,9 @@
-Collection of layers for the OE-core universe
+Flight controller yocto layer.
 
-Please see the respective READMEs in the layer subdirectories
+Current name is MACH.  Choose an acronym.
 
+MACH: Multifunctional AeroControl Hub
+MACH: Modular Aerospace Control Hub
+MACH: Mission-Adaptive Control Hub
+MACH: Hypersonic Avionics Control Hub
+...
