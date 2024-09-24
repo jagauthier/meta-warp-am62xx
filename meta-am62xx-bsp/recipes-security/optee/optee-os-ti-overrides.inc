@@ -1,15 +1,14 @@
-PV = "3.20.0+git${SRCPV}"
-PV = "1.0+git${SRCPV}"
-# SRCREV = "8e74d47616a20eaa23ca692f4bbbf917a236ed94"
-SRCREV = "${AUTOREV}"
-
 # Use TI SECDEV for signing
 inherit ti-secdev
 
+EXTRA_OEMAKE:remove = "CFG_MAP_EXT_DT_SECURE=y"
+
 EXTRA_OEMAKE:append:k3 = "${@ ' CFG_CONSOLE_UART='+ d.getVar('OPTEE_K3_USART') if d.getVar('OPTEE_K3_USART') else ''}"
 
-EXTRA_OEMAKE:append:am62xx = " CFG_WITH_SOFTWARE_PRNG=y CFG_TEE_CORE_LOG_LEVEL=1"
+EXTRA_OEMAKE:append:am62xx = " CFG_TEE_CORE_LOG_LEVEL=1"
+EXTRA_OEMAKE:append:am62pxx = " CFG_WITH_SOFTWARE_PRNG=y CFG_TEE_CORE_LOG_LEVEL=1"
 EXTRA_OEMAKE:append:am62axx = " CFG_TEE_CORE_LOG_LEVEL=1"
+EXTRA_OEMAKE:append:j722s = " CFG_WITH_SOFTWARE_PRNG=y CFG_TEE_CORE_LOG_LEVEL=1"
 
 do_compile:append:k3() {
     cp ${B}/core/tee-pager_v2.bin ${B}/bl32.bin
@@ -47,6 +46,10 @@ do_install:append() {
     install -m 644 ${B}/*.optee ${D}${nonarch_base_libdir}/firmware/ || true
     install -m 644 ${B}/bl32.bin ${D}${nonarch_base_libdir}/firmware/ || true
     install -m 644 ${B}/bl32.elf ${D}${nonarch_base_libdir}/firmware/ || true
+
+    # Install embedded TAs
+    mkdir -p ${D}${nonarch_base_libdir}/optee_armtz/
+    install -D -p -m0444 ${B}/ta/*/*.ta ${D}${nonarch_base_libdir}/optee_armtz/
 }
 
 optee_deploy_legacyhs() {
@@ -68,6 +71,8 @@ do_deploy:append:k3() {
     ln -sf optee/bl32.bin ${DEPLOYDIR}/
     ln -sf optee/bl32.elf ${DEPLOYDIR}/
 }
+
+FILES:${PN} += "${nonarch_base_libdir}/optee_armtz/"
 
 # This is needed for bl32.elf
 INSANE_SKIP:${PN}:append:k3 = " textrel"
