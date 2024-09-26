@@ -87,11 +87,11 @@ inherit ti-secdev
 SYSROOT_DIRS += "/boot"
 
 # SPL (Second Program Loader) to be loaded over UART
-SPL_UART_BINARY = "u-boot-spl.bin"
-SPL_UART_BINARY:k3r5 = ""
+# SPL_UART_BINARY = "u-boot-spl.bin"
+# SPL_UART_BINARY:k3r5 = ""
 
-SPL_UART_IMAGE ?= "${SPL_UART_BINARY}-${MACHINE}-${PV}-${PR}"
-SPL_UART_SYMLINK ?= "${SPL_UART_BINARY}-${MACHINE}"
+# SPL_UART_IMAGE ?= "${SPL_UART_BINARY}-${MACHINE}-${PV}-${PR}"
+# SPL_UART_SYMLINK ?= "${SPL_UART_BINARY}-${MACHINE}"
 
 SPL_HS_MLO_BINARY = "u-boot-spl_HS_MLO"
 SPL_HS_MLO_IMAGE = "u-boot-spl_HS_MLO-${MACHINE}-${PV}-${PR}"

@@ -1,9 +1,6 @@
 Flight controller yocto layer.
 
-Current name is MACH.  Choose an acronym.
+Current name is WARP.  Choose an acronym.
 
-MACH: Multifunctional AeroControl Hub
-MACH: Modular Aerospace Control Hub
-MACH: Mission-Adaptive Control Hub
-MACH: Hypersonic Avionics Control Hub
-...
+
+? Adaptive Response Platform
