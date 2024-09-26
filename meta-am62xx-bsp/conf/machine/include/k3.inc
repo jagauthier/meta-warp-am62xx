@@ -15,8 +15,9 @@ PREFERRED_PROVIDER_virtual/bootloader ?= "u-boot-ti-staging"
 PREFERRED_PROVIDER_u-boot ?= "u-boot-ti-staging"
 
 KERNEL_IMAGETYPE = "Image"
-KERNEL_IMAGETYPES = "Image fitImage"
-KERNEL_CLASSES += "kernel-fitimage"
+
+#KERNEL_IMAGETYPES = "Image fitImage"
+#KERNEL_CLASSES += "kernel-fitimage"
 
 UBOOT_ARCH = "arm"
 UBOOT_ENTRYPOINT = "0x81000000"
@@ -49,7 +50,8 @@ UBI_VOLNAME = "rootfs"
 # List common SoC features, may need to add touchscreen for specific machines
 MACHINE_FEATURES = "kernel26 apm usbgadget usbhost vfat ext2 alsa ethernet pci"
 
-IMAGE_FSTYPES += "tar.xz wic.xz wic.bmap ext4"
+#IMAGE_FSTYPES += "tar.xz wic.xz wic.bmap ext4"
+IMAGE_FSTYPES += "wic.xz"
 
 IMAGE_BOOT_FILES ?= "${SPL_BINARYNAME} u-boot.${UBOOT_SUFFIX} tiboot3.bin"
 IMAGE_EFI_BOOT_FILES ?= "${IMAGE_BOOT_FILES}"
