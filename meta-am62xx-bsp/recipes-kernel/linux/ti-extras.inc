@@ -4,7 +4,7 @@
 
 COMPATIBLE_MACHINE = "am62xx"
 
-BRANCH = "ti-linux-6.1.y"
+BRANCH = "ti-linux-6.6.y"
 BRANCH:tie-jailhouse = "ti-linux-6.1.y-jailhouse"
 
 SRCREV = "30bcc25e7cb1b25667db88d61828728f0f0b5f4b"

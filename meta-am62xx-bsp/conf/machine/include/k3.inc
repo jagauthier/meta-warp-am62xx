@@ -10,7 +10,7 @@ BBMULTICONFIG += "k3r5"
 # Increase this everytime you change something in the kernel
 MACHINE_KERNEL_PR = "r0"
 
-PREFERRED_PROVIDER_virtual/kernel ?= "linux-ti-staging"
+PREFERRED_PROVIDER_virtual/kernel ?= "linux-ti-staging-rt"
 PREFERRED_PROVIDER_virtual/bootloader ?= "u-boot-ti-staging"
 PREFERRED_PROVIDER_u-boot ?= "u-boot-ti-staging"
 
@@ -64,5 +64,5 @@ WKS_FILE ?= "${@bb.utils.contains("MACHINE_FEATURES", "efi", "sdimage-2part-efi.
 do_image_wic[depends] += "virtual/bootloader:do_deploy"
 do_image_complete[mcdepends] += "mc::k3r5:virtual/bootloader:do_deploy"
 
-SERIAL_CONSOLES = "115200;ttyS0 115200;ttyS2"
+SERIAL_CONSOLES = "115200;ttyS0"
 SERIAL_CONSOLES_CHECK = "${SERIAL_CONSOLES}"
