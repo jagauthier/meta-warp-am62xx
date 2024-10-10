@@ -1,3 +1,4 @@
+Upstream-Status: Pending
 diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
 index 173159e93c99c..bf9ed962dde56 100644
 --- a/arch/arm/Kconfig

@@ -9,7 +9,7 @@ BBFILE_COLLECTIONS += "meta-am62xx-bsp"
 BBFILE_PATTERN_meta-am62xx-bsp := "^${LAYERDIR}/"
 BBFILE_PRIORITY_meta-am62xx-bsp = "6"
 
-LAYERSERIES_COMPAT_meta-am62xx-bsp = "styhead scarthgap kirkstone langdale"
+LAYERSERIES_COMPAT_meta-am62xx-bsp = "scarthgap kirkstone langdale"
 
 LICENSE_PATH += "${LAYERDIR}/licenses"
 

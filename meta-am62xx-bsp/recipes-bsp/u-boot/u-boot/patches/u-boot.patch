@@ -1,3 +1,4 @@
+Upstream-Status: Pending
 diff --git a/arch/arm/dts/k3-am625-sk-binman.dtsi b/arch/arm/dts/k3-am625-sk-binman.dtsi
 index 3eab1522664..a54ffba032c 100644
 --- a/arch/arm/dts/k3-am625-sk-binman.dtsi
