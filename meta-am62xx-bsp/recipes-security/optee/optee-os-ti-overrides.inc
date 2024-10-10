@@ -72,6 +72,12 @@ do_deploy:append:k3() {
     ln -sf optee/bl32.elf ${DEPLOYDIR}/
 }
 
+# Remove "dirty"
+do_configure() {
+  rm -rf ${S}/.git
+  rm -rf ${B}/.git
+}
+
 FILES:${PN} += "${nonarch_base_libdir}/optee_armtz/"
 
 # This is needed for bl32.elf

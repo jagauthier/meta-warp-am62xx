@@ -21,8 +21,9 @@ SUMMARY = "u-boot bootloader for TI devices"
 LICENSE = "GPL-2.0-or-later"
 LIC_FILES_CHKSUM = "file://Licenses/README;md5=2ca5f2c35c8cc335f0a19756634782f1"
 
-BRANCH ?= "main"
-UBOOT_GIT_URI ?= "git://github.com/jagauthier/ti-u-boot.git"
+#BRANCH ?= "main"
+#UBOOT_GIT_URI ?= "git://github.com/jagauthier/ti-u-boot.git"
+UBOOT_GIT_URI ?= "git://git.ti.com/git/ti-u-boot/ti-u-boot.git"
 UBOOT_GIT_PROTOCOL = "https"
 SRC_URI = "${UBOOT_GIT_URI};protocol=${UBOOT_GIT_PROTOCOL};branch=${BRANCH}"
 
