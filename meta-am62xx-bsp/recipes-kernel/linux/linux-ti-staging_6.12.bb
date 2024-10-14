@@ -32,8 +32,8 @@ BRANCH ?= "master"
 
 # this is the tag commit for 6.11
 
-SRCREV = "98f7e32f20d28ec452afb208f9cffc08448a2652"
-PV = "6.11+git${SRCPV}"
+SRCREV = "8e929cb546ee42c9a61d24fae60605e9e3192354"
+PV = "6.12+git${SRCPV}"
 
 # Append to the MACHINE_KERNEL_PR so that a new SRCREV will cause a rebuild
 MACHINE_KERNEL_PR:append = "b"

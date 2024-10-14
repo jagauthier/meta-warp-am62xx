@@ -1,7 +1,7 @@
 
 do_compile:prepend () {
     scm_version=$(printf '%s%s' -ti-g $(git -C ${S} rev-parse --verify HEAD 2>/dev/null | cut -c1-12))
-
+    scm_version="-GHI"
     echo ${scm_version} > ${B}/.scmversion
     echo ${scm_version} > ${S}/.scmversion
 }

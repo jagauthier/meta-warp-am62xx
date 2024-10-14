@@ -1,0 +1,230 @@
+Upstream-Status: Pending
+diff --git a/arch/arm/dts/k3-am625-sk-binman.dtsi b/arch/arm/dts/k3-am625-sk-binman.dtsi
+index eddf05594d5..a71c24683fd 100644
+--- a/arch/arm/dts/k3-am625-sk-binman.dtsi
++++ b/arch/arm/dts/k3-am625-sk-binman.dtsi
+@@ -55,7 +55,6 @@
+ &binman {
+ 	tiboot3-am62x-hs-fs-evm.bin {
+ 		filename = "tiboot3-am62x-hs-fs-evm.bin";
+-		symlink = "tiboot3.bin";
+ 		ti-secure-rom {
+ 			content = <&u_boot_spl_fs>, <&ti_fs_enc_fs>, <&combined_tifs_cfg_fs>,
+ 				<&combined_dm_cfg_fs>, <&sysfw_inner_cert_fs>;
+@@ -101,6 +100,7 @@
+ &binman {
+ 	tiboot3-am62x-gp-evm.bin {
+ 		filename = "tiboot3-am62x-gp-evm.bin";
++		symlink = "tiboot3.bin";
+ 		ti-secure-rom {
+ 			content = <&u_boot_spl_unsigned>, <&ti_fs_gp>,
+ 				<&combined_tifs_cfg_gp>, <&combined_dm_cfg_gp>;
+diff --git a/arch/arm/dts/k3-am625-sk.dts b/arch/arm/dts/k3-am625-sk.dts
+index 5ca722aec43..f19af0da2b9 100644
+--- a/arch/arm/dts/k3-am625-sk.dts
++++ b/arch/arm/dts/k3-am625-sk.dts
+@@ -11,7 +11,7 @@
+ 
+ / {
+ 	compatible = "ti,am625-sk", "ti,am625";
+-	model = "Texas Instruments AM625 SK";
++	model = "WARP AM625";
+ 
+ 	opp-table {
+ 		/* Add 1.4GHz OPP for am625-sk board. Requires VDD_CORE to be at 0.85V */
+@@ -74,7 +74,7 @@
+ 		regulator-boot-on;
+ 		enable-active-high;
+ 		vin-supply = <&vcc_3v3_sys>;
+-		gpio = <&exp1 3 GPIO_ACTIVE_HIGH>;
++/*		gpio = <&exp1 3 GPIO_ACTIVE_HIGH>;*/
+ 	};
+ 
+ 	vdd_sd_dv: regulator-4 {
+diff --git a/board/ti/am62x/evm.c b/board/ti/am62x/evm.c
+index 3d924d6cbcd..4d6e47893b7 100644
+--- a/board/ti/am62x/evm.c
++++ b/board/ti/am62x/evm.c
+@@ -93,6 +93,7 @@ int checkboard(void)
+ }
+ 
+ #if CONFIG_IS_ENABLED(BOARD_LATE_INIT)
++
+ static void setup_board_eeprom_env(void)
+ {
+ 	char *name = "am62x_skevm";
+@@ -140,7 +141,152 @@ static void setup_serial(void)
+ #endif
+ #endif
+ 
++
+ #if CONFIG_IS_ENABLED(BOARD_LATE_INIT)
++
++#define WKUP_MMR0_JTAG_USER_ID 0x43000018
++#define K3_BOOT_PARAM_TABLE_INDEX_OCRAM  0x7000F290
++int setup_default_dts(void)
++{
++	u32 val;
++	val = readl(WKUP_MMR0_JTAG_USER_ID);
++	printf("WARP device\n");
++
++
++	switch(val){
++		case 0x3a08e4e1:
++			break;
++		case 0x3a146521:
++			env_set("fdtfile", "warp/warp-6252.dtb");
++			break;
++
++		default:
++			env_set("fdtfile", "warp/warp-6254.dtb");
++			break;
++	}
++	
++	return 0;
++}
++
++static u32 __get_backup_bootmedia(u32 devstat)
++{
++	u32 bkup_bootmode = (devstat & MAIN_DEVSTAT_BACKUP_BOOTMODE_MASK) >>
++				MAIN_DEVSTAT_BACKUP_BOOTMODE_SHIFT;
++	u32 bkup_bootmode_cfg =
++			(devstat & MAIN_DEVSTAT_BACKUP_BOOTMODE_CFG_MASK) >>
++				MAIN_DEVSTAT_BACKUP_BOOTMODE_CFG_SHIFT;
++
++	switch (bkup_bootmode) {
++	case BACKUP_BOOT_DEVICE_UART:
++		return BOOT_DEVICE_UART;
++
++	case BACKUP_BOOT_DEVICE_USB:
++		return BOOT_DEVICE_USB;
++
++	case BACKUP_BOOT_DEVICE_ETHERNET:
++		return BOOT_DEVICE_ETHERNET;
++
++	case BACKUP_BOOT_DEVICE_MMC:
++		if (bkup_bootmode_cfg)
++			return BOOT_DEVICE_MMC2;
++		return BOOT_DEVICE_MMC1;
++
++	case BACKUP_BOOT_DEVICE_SPI:
++		return BOOT_DEVICE_SPI;
++
++	case BACKUP_BOOT_DEVICE_I2C:
++		return BOOT_DEVICE_I2C;
++
++	case BACKUP_BOOT_DEVICE_DFU:
++		if (bkup_bootmode_cfg & MAIN_DEVSTAT_BACKUP_USB_MODE_MASK)
++			return BOOT_DEVICE_USB;
++		return BOOT_DEVICE_DFU;
++	};
++
++	return BOOT_DEVICE_RAM;
++}
++
++static u32 __get_primary_bootmedia(u32 devstat)
++{
++	u32 bootmode = (devstat & MAIN_DEVSTAT_PRIMARY_BOOTMODE_MASK) >>
++				MAIN_DEVSTAT_PRIMARY_BOOTMODE_SHIFT;
++	u32 bootmode_cfg = (devstat & MAIN_DEVSTAT_PRIMARY_BOOTMODE_CFG_MASK) >>
++				MAIN_DEVSTAT_PRIMARY_BOOTMODE_CFG_SHIFT;
++
++	switch (bootmode) {
++	case BOOT_DEVICE_OSPI:
++		fallthrough;
++	case BOOT_DEVICE_QSPI:
++		fallthrough;
++	case BOOT_DEVICE_XSPI:
++		fallthrough;
++	case BOOT_DEVICE_SPI:
++		return BOOT_DEVICE_SPI;
++
++	case BOOT_DEVICE_ETHERNET_RGMII:
++		fallthrough;
++	case BOOT_DEVICE_ETHERNET_RMII:
++		return BOOT_DEVICE_ETHERNET;
++
++	case BOOT_DEVICE_EMMC:
++		return BOOT_DEVICE_MMC1;
++
++	case BOOT_DEVICE_MMC:
++		if ((bootmode_cfg & MAIN_DEVSTAT_PRIMARY_MMC_PORT_MASK) >>
++				MAIN_DEVSTAT_PRIMARY_MMC_PORT_SHIFT)
++			return BOOT_DEVICE_MMC2;
++		return BOOT_DEVICE_MMC1;
++
++	case BOOT_DEVICE_DFU:
++		if ((bootmode_cfg & MAIN_DEVSTAT_PRIMARY_USB_MODE_MASK) >>
++		    MAIN_DEVSTAT_PRIMARY_USB_MODE_SHIFT)
++			return BOOT_DEVICE_USB;
++		return BOOT_DEVICE_DFU;
++
++	case BOOT_DEVICE_NOBOOT:
++		return BOOT_DEVICE_RAM;
++	}
++
++	return bootmode;
++}
++
++u32 get_boot_device(void)
++{
++	u32 devstat = readl(CTRLMMR_MAIN_DEVSTAT);
++	u32 bootmode = *(u32 *)(K3_BOOT_PARAM_TABLE_INDEX_OCRAM);
++	u32 bootmedia;
++
++	if (bootmode == K3_PRIMARY_BOOTMODE)
++		bootmedia = __get_primary_bootmedia(devstat);
++	else
++		bootmedia = __get_backup_bootmedia(devstat);
++
++	debug("%s: devstat = 0x%x bootmedia = 0x%x bootmode = %d\n",
++	      __func__, devstat, bootmedia, bootmode);
++
++	return bootmedia;
++}
++
++
++void set_boot_environment(void) 
++{
++	u32 boot_device = get_boot_device();
++	switch (boot_device) {
++	case BOOT_DEVICE_MMC1:
++		printf("Current device is EMMC.\n");
++		env_set_ulong("mmcdev", 0);
++		env_set("bootpart", "0:2");
++		break;
++	case BOOT_DEVICE_MMC2:
++	    printf("Current device is SD card.\n");
++		env_set_ulong("mmcdev", 1);
++		env_set("bootpart", "1:2");
++		break;
++	};
++      setup_default_dts();
++}
++
++
+ int board_late_init(void)
+ {
+ 	if (IS_ENABLED(CONFIG_TI_I2C_BOARD_DETECT)) {
+@@ -149,6 +295,8 @@ int board_late_init(void)
+ 	}
+ 
+ 	ti_set_fdt_env(NULL, NULL);
++	set_boot_environment();
++
+ 	return 0;
+ }
+ #endif
+diff --git a/configs/am62x_evm_a53_defconfig b/configs/am62x_evm_a53_defconfig
+index 644989b1eae..10fe42e9345 100644
+--- a/configs/am62x_evm_a53_defconfig
++++ b/configs/am62x_evm_a53_defconfig
+@@ -13,6 +13,8 @@ CONFIG_SF_DEFAULT_SPEED=25000000
+ CONFIG_DM_GPIO=y
+ CONFIG_SPL_DM_SPI=y
+ CONFIG_DEFAULT_DEVICE_TREE="k3-am625-sk"
++CONFIG_DEFAULT_FDT_FILE="warp-625x.dtb"
++CONFIG_TI_FDT_FOLDER_PATH="warp"
+ CONFIG_SPL_TEXT_BASE=0x80080000
+ CONFIG_OF_LIBFDT_OVERLAY=y
+ CONFIG_DM_RESET=y
