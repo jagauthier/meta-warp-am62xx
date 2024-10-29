@@ -13,6 +13,8 @@ include ${@ 'recipes-kernel/linux/ti-kernel-devicetree-prefix.inc' if d.getVar('
 include ${@ 'recipes-kernel/linux/ti-extras.inc' if d.getVar('TI_EXTRAS') else ''}
 include ${@ 'recipes-kernel/linux/kernel-patch.inc' if d.getVar('KERNEL_PATCHES') else ''}
 
+RT_CONFIG_FRAGMENT="${S}/kernel/configs/ti_rt.config"
+
 DEPENDS += "gmp-native libmpc-native"
 
 KBUILD_BUILD_USER ?= "GHI"
@@ -21,7 +23,7 @@ KBUILD_BUILD_HOST ?= "WARP"
 SRC_URI[sha256sum] = "b2eecf1647c8f7c948d3d0e67351b79d31418ac52232d649d6d1d72a22b50de3"
 
 # Look in the generic major.minor directory for files
-FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}-6.11:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}-6.12:"
 
 KERNEL_EXTRA_ARGS += "LOADADDR=${UBOOT_ENTRYPOINT} \
 		      ${EXTRA_DTC_ARGS}"
@@ -30,9 +32,9 @@ S = "${WORKDIR}/git"
 
 BRANCH ?= "master"
 
-# this is the tag commit for 6.11
+# this is the tag commit for 6.12
 
-SRCREV = "8e929cb546ee42c9a61d24fae60605e9e3192354"
+SRCREV = "42f7652d3eb527d03665b09edac47f85fb600924"
 PV = "6.12+git${SRCPV}"
 
 # Append to the MACHINE_KERNEL_PR so that a new SRCREV will cause a rebuild
