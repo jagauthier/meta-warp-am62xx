@@ -17,9 +17,6 @@ RT_CONFIG_FRAGMENT="${S}/kernel/configs/ti_rt.config"
 
 DEPENDS += "gmp-native libmpc-native"
 
-KBUILD_BUILD_USER ?= "GHI"
-KBUILD_BUILD_HOST ?= "WARP"
-
 SRC_URI[sha256sum] = "b2eecf1647c8f7c948d3d0e67351b79d31418ac52232d649d6d1d72a22b50de3"
 
 # Look in the generic major.minor directory for files
@@ -34,7 +31,7 @@ BRANCH ?= "master"
 
 # this is the tag commit for 6.12
 
-SRCREV = "42f7652d3eb527d03665b09edac47f85fb600924"
+SRCREV = "81983758430957d9a5cb3333fe324fd70cf63e7e"
 PV = "6.12+git${SRCPV}"
 
 # Append to the MACHINE_KERNEL_PR so that a new SRCREV will cause a rebuild
