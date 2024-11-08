@@ -42,8 +42,6 @@ ERROR_QA:remove = "buildpaths"
 MACHINE_KERNEL_PR:append = "b"
 PR = "${MACHINE_KERNEL_PR}"
 
-KERNEL_GIT_URI ?= "git://git.ti.com/ti-linux-kernel/ti-linux-kernel.git"
-
 KERNEL_GIT_URI ?= "git://git.ti.com/git/ti-linux-kernel/ti-linux-kernel.git"
 KERNEL_GIT_PROTOCOL ?= "https"
 
