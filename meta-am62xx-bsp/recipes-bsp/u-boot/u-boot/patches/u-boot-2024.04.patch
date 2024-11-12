@@ -20,7 +20,7 @@ index eddf05594d5..a71c24683fd 100644
  			content = <&u_boot_spl_unsigned>, <&ti_fs_gp>,
  				<&combined_tifs_cfg_gp>, <&combined_dm_cfg_gp>;
 diff --git a/arch/arm/dts/k3-am625-sk.dts b/arch/arm/dts/k3-am625-sk.dts
-index 5ca722aec43..f19af0da2b9 100644
+index 5ca722aec43..42d3a6412c2 100644
 --- a/arch/arm/dts/k3-am625-sk.dts
 +++ b/arch/arm/dts/k3-am625-sk.dts
 @@ -11,7 +11,7 @@
@@ -32,6 +32,15 @@ index 5ca722aec43..f19af0da2b9 100644
  
  	opp-table {
  		/* Add 1.4GHz OPP for am625-sk board. Requires VDD_CORE to be at 0.85V */
+@@ -26,7 +26,7 @@
+ 		device_type = "memory";
+ 		/* 2G RAM */
+ 		reg = <0x00000000 0x80000000 0x00000000 0x80000000>;
+-
++                auto-size;
+ 	};
+ 
+ 	vmain_pd: regulator-0 {
 @@ -74,7 +74,7 @@
  		regulator-boot-on;
  		enable-active-high;
@@ -228,3 +237,42 @@ index 644989b1eae..10fe42e9345 100644
  CONFIG_SPL_TEXT_BASE=0x80080000
  CONFIG_OF_LIBFDT_OVERLAY=y
  CONFIG_DM_RESET=y
+diff --git a/lib/fdtdec.c b/lib/fdtdec.c
+index b2c59ab3818..7970c3c106e 100644
+--- a/lib/fdtdec.c
++++ b/lib/fdtdec.c
+@@ -1079,6 +1079,7 @@ int fdtdec_setup_memory_banksize(void)
+ {
+ 	int bank, ret, reg = 0;
+ 	struct resource res;
++	bool autosize = false;
+ 	ofnode mem = ofnode_null();
+ 
+ 	mem = get_next_memory_node(mem);
+@@ -1107,6 +1108,26 @@ int fdtdec_setup_memory_banksize(void)
+ 		gd->bd->bi_dram[bank].size =
+ 			(phys_size_t)(res.end - res.start + 1);
+ 
++		autosize = ofnode_read_bool(mem, "auto-size");
++		if(autosize){
++			u64 new_size;
++			u64 start = gd->bd->bi_dram[bank].start;
++			u64 size = gd->bd->bi_dram[bank].size;
++
++
++			debug("Auto-sizing %llx, size %llx: ", start, size);
++			new_size = get_ram_size((long *)(uintptr_t)start, size);
++			if (new_size == size) {
++				debug("OK\n");
++				printf("OK\n");
++			} else {
++				debug("sized to %llx\n", new_size);
++
++				size = new_size;
++				gd->bd->bi_dram[bank].size = size;
++			}
++		}
++
+ 		debug("%s: DRAM Bank #%d: start = 0x%llx, size = 0x%llx\n",
+ 		      __func__, bank,
+ 		      (unsigned long long)gd->bd->bi_dram[bank].start,
