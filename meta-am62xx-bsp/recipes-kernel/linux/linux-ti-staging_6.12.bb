@@ -27,18 +27,18 @@ KERNEL_EXTRA_ARGS += "LOADADDR=${UBOOT_ENTRYPOINT} \
 
 S = "${WORKDIR}/git"
 
-BRANCH ?= "master"
+BRANCH ?= "linux-6.12.y"
 
 # this is the tag commit for 6.12
 
-SRCREV = "59b723cd2adbac2a34fc8e12c74ae26ae45bf230"
+SRCREV = "${AUTOREV}"
 PV = "6.12+git${SRCPV}"
 
 # Append to the MACHINE_KERNEL_PR so that a new SRCREV will cause a rebuild
 MACHINE_KERNEL_PR:append = "b"
 PR = "${MACHINE_KERNEL_PR}"
 
-KERNEL_GIT_URI ?= "git://github.com/torvalds/linux.git"
+KERNEL_GIT_URI ?= "git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 
 KERNEL_GIT_PROTOCOL ?= "https"
 SRC_URI += "${KERNEL_GIT_URI};protocol=${KERNEL_GIT_PROTOCOL};branch=${BRANCH} \
