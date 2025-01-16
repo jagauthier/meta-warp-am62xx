@@ -31,6 +31,8 @@ BRANCH ?= "linux-6.12.y"
 
 # this is the tag commit for 6.12
 
+# This always gets the latest stable release
+
 SRCREV = "${AUTOREV}"
 PV = "6.12+git${SRCPV}"
 
