@@ -20,21 +20,21 @@ DEPENDS += "gmp-native libmpc-native"
 SRC_URI[sha256sum] = "b2eecf1647c8f7c948d3d0e67351b79d31418ac52232d649d6d1d72a22b50de3"
 
 # Look in the generic major.minor directory for files
-FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}-6.12:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}-6.17:"
 
 KERNEL_EXTRA_ARGS += "LOADADDR=${UBOOT_ENTRYPOINT} \
 		      ${EXTRA_DTC_ARGS}"
 
 S = "${WORKDIR}/git"
 
-BRANCH ?= "linux-6.12.y"
+BRANCH ?= "linux-6.17.y"
 
-# this is the tag commit for 6.12
+# this is the tag commit for 6.17
 
 # This always gets the latest stable release
 
 SRCREV = "${AUTOREV}"
-PV = "6.12+git${SRCPV}"
+PV = "6.17+git${SRCPV}"
 
 # Append to the MACHINE_KERNEL_PR so that a new SRCREV will cause a rebuild
 MACHINE_KERNEL_PR:append = "b"
