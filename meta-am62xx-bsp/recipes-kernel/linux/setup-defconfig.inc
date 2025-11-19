@@ -14,8 +14,8 @@ do_configure() {
 	
 	# copy over the custom files
 	cp ${UNPACKDIR}/configs/* ${S}/kernel/configs
-	cp -r ${UNPACKDIR}/dts/warp ${S}/arch/arm64/boot/dts
-	echo 'subdir-y += warp' >> ${S}/arch/arm64/boot/dts/Makefile
+	cp -r ${UNPACKDIR}/dts/myir-6254-am62x ${S}/arch/arm64/boot/dts
+	echo 'subdir-y += myir-6254-am62x' >> ${S}/arch/arm64/boot/dts/Makefile
 	
 	# I don't want to kernel to show up as 'dirty'. That's dumb.
 	rm -rf ${B}/.git 

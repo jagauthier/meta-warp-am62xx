@@ -3,5 +3,5 @@
 # Make file to build device tree binaries for boards based on
 DTC_FLAGS += -@
 
-dtb-$(CONFIG_ARCH_K3) += warp-6254.dtb
-dtb-$(CONFIG_ARCH_K3) += warp-6252.dtb
+dtb-$(CONFIG_ARCH_K3) += myir-6254-am62x-6254.dtb
+dtb-$(CONFIG_ARCH_K3) += myir-6254-am62x-6252.dtb

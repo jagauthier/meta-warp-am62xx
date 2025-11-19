@@ -49,7 +49,7 @@ index e507ca276ce..7c944ee63ac 100644
  #endif
  
 -default_device_tree=ti/k3-am625-sk.dtb
-+default_device_tree=warp/warp-625x.dtb
++default_device_tree=myir-6254-am62x/myir-6254-am62x-625x.dtb
  findfdt=
  	setenv name_fdt ${default_device_tree};
 -	if test $board_name = am62x_skevm; then

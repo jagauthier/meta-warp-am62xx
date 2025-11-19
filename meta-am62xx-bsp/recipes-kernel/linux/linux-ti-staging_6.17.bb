@@ -45,7 +45,7 @@ KERNEL_GIT_URI ?= "git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.gi
 KERNEL_GIT_PROTOCOL ?= "https"
 SRC_URI += "${KERNEL_GIT_URI};protocol=${KERNEL_GIT_PROTOCOL};branch=${BRANCH} \
 			file://configs/ \
-			file://dts/warp/"
+			file://dts/myir-6254-am62x/"
 			
 
 # Special configuration for remoteproc/rpmsg IPC modules
