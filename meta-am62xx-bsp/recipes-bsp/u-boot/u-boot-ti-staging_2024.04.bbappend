@@ -1,0 +1,120 @@
+UBOOT_PATCHES_myir-6252-am62x = "0001-binman-symlink-change-${VER}.patch \
+                                 0002-autosize-name-gpio-${VER}.patch  \
+                                 0003-configure-boot-env-${VER}.patch \
+                                 0004-defconfig-change-${VER}.patch \
+                                 0005-autosize-memory-${VER}.patch"
+UBOOT_PATCHES_myir-6252-am62x-k3r5 = "${UBOOT_PATCHES_myir-6252-am62x}"
+UBOOT_PATCHES_myir-6254-am62x = "${UBOOT_PATCHES_myir-6252-am62x}"
+UBOOT_PATCHES_myir-6254-am62x-k3r5 = "${UBOOT_PATCHES_myir-6252-am62x}"
+
+# Function to get patches for the current machine
+def get_machine_patches(d):
+    machine = d.getVar('MACHINE', True)
+    patches = d.getVar('UBOOT_PATCHES_' + machine, True)
+    if not patches:
+        return ""
+    
+    patch_list = patches.split()
+    src_uri = ""
+    for patch in patch_list:
+        src_uri += " file://patches/" + patch + ";unpack=1"
+    return src_uri
+
+# Add machine-specific patches to SRC_URI
+SRC_URI += "${@get_machine_patches(d)}"
+
+# Function to pre-process patches by replacing placeholders
+python do_preprocess_patches() {
+    import os
+    import shutil
+    import re
+    
+    #bb.warn("Starting do_preprocess_patches task")
+    
+    # Get the UBOOT_BOOT_DEVICE value from the recipe
+
+    replace_texts = ['@UBOOT_BOOT_DEVICE@', '@CONFIG_DEFAULT_FDT_FILE@', '@CONFIG_TI_FDT_FOLDER_PATH@', '@MEMORY_TEXT_SIZE@', '@MEMORY_SIZE@']
+
+    replace_values = [
+        d.getVar('UBOOT_BOOT_DEVICE', True),
+        d.getVar('CONFIG_DEFAULT_FDT_FILE', True),
+        d.getVar('CONFIG_TI_FDT_FOLDER_PATH', True),
+        d.getVar('MEMORY_TEXT_SIZE', True),
+        d.getVar('MEMORY_SIZE', True)
+    ]
+    
+    # Get the unpack directory
+    unpackdir = os.path.join(d.getVar('UNPACKDIR', True), 'patches')
+
+    # Get the patches for the current machine
+    machine = d.getVar('MACHINE', True)
+    patches = d.getVar('UBOOT_PATCHES_' + machine, True)
+    if not patches:
+        bb.warn("No patches found for machine %s" % machine)
+        return
+    
+    # Process each patch file
+    patch_list = patches.split()
+    for patch in patch_list:
+        # Path to the patch file in the UNPACKDIR
+        unpack_patch_file = os.path.join(unpackdir, patch)
+        
+        # Check if the patch file exists
+        if not os.path.exists(unpack_patch_file):
+            bb.error("Patch file not found: %s" % unpack_patch_file)
+            continue
+        
+        # Read the patch file from UNPACKDIR
+        with open(unpack_patch_file, 'r') as f:
+            content = f.read()
+        
+        # Replace placeholders using a loop
+        for i in range(len(replace_texts)):
+            if replace_texts[i] in content and replace_values[i] is not None:
+                content = content.replace(replace_texts[i], replace_values[i])
+        
+        # Write the processed patch back to UNPACKDIR
+        with open(unpack_patch_file, 'w') as f:
+            f.write(content)
+}
+
+# Custom do_patch function to apply patches from UNPACKDIR
+python do_patch() {
+    import os
+    import subprocess
+    import shutil
+    
+    # Get the source directory
+    srcdir = d.getVar('S', True)
+    
+    # Get the unpack directory
+    unpackdir = os.path.join(d.getVar('UNPACKDIR', True), 'patches')
+    
+    # Get the patches for the current machine
+    machine = d.getVar('MACHINE', True)
+    patches = d.getVar('UBOOT_PATCHES_' + machine, True)
+    if not patches:
+        bb.warn("No patches found for machine %s" % machine)
+        return
+    
+    # Process each patch file
+    patch_list = patches.split()
+    for patch in patch_list:
+        # Path to the patch file in the UNPACKDIR
+        patch_file = os.path.join(unpackdir, patch)
+        
+        # Check if the patch file exists
+        if not os.path.exists(patch_file):
+            bb.error("Patch file not found: %s" % patch_file)
+            continue
+        
+        # Apply the patch using the patch command
+        try:
+            subprocess.check_call(['patch', '-t', '-p1', '-d', srcdir, '-i', patch_file])
+        except subprocess.CalledProcessError as e:
+            bb.error("Failed to apply patch %s: %s" % (patch, e))
+            raise
+}
+
+# Add the patch pre-processing task to the build
+addtask do_preprocess_patches before do_patch after do_unpack

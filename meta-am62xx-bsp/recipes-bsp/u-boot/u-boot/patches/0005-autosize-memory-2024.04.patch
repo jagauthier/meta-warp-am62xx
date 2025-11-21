@@ -1,0 +1,47 @@
+Upstream-Status: Pending
+diff --git a/lib/fdtdec.c b/lib/fdtdec.c
+index b2c59ab3818..b834c5eedfe 100644
+--- a/lib/fdtdec.c
++++ b/lib/fdtdec.c
+@@ -1079,6 +1079,7 @@ int fdtdec_setup_memory_banksize(void)
+ {
+ 	int bank, ret, reg = 0;
+ 	struct resource res;
++	bool autosize = false;
+ 	ofnode mem = ofnode_null();
+ 
+ 	mem = get_next_memory_node(mem);
+@@ -1107,10 +1108,32 @@ int fdtdec_setup_memory_banksize(void)
+ 		gd->bd->bi_dram[bank].size =
+ 			(phys_size_t)(res.end - res.start + 1);
+ 
+-		debug("%s: DRAM Bank #%d: start = 0x%llx, size = 0x%llx\n",
++		printf("%s: DRAM Bank #%d: start = 0x%llx, size = 0x%llx\n",
+ 		      __func__, bank,
+ 		      (unsigned long long)gd->bd->bi_dram[bank].start,
+ 		      (unsigned long long)gd->bd->bi_dram[bank].size);
++
++		autosize = ofnode_read_bool(mem, "auto-size");
++		if(autosize){
++			u64 new_size;
++			u64 start = gd->bd->bi_dram[bank].start;
++			u64 size = gd->bd->bi_dram[bank].size;
++
++			printf("Auto-sizing %p, size %p\n", (void *)start, (void *)size);
++			new_size = get_ram_size((long *)(uintptr_t)start, size);
++			if (new_size == size) {
++				printf("\tNo auto sizing needed.\n");
++			} else {
++				printf("\tResized to %p\n", (void *)new_size);
++
++				size = new_size;
++				gd->bd->bi_dram[bank].size = size;
++			}
++			printf("%s: DRAM Bank #%d: start = %p, size = %p\n",
++				  __func__, bank,
++				  (void *)gd->bd->bi_dram[bank].start,
++				  (void *)gd->bd->bi_dram[bank].size);
++		}
+ 	}
+ 
+ 	return 0;

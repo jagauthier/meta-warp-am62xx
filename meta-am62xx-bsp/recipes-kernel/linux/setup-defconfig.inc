@@ -10,17 +10,18 @@ KERNEL_LOCALVERSION = ""
 KERNEL_CONFIG_FRAGMENTS="${S}/kernel/configs/ti_arm64_prune.config"
 OTHER_CONFIG_FRAMENTS=" ${RT_CONFIG_FRAGMENT} ${S}/kernel/configs/am625x_custom.config"
 
+# These items must match the machine name!
+
 do_configure() {
 	
 	# copy over the custom files
 	cp ${UNPACKDIR}/configs/* ${S}/kernel/configs
-	cp -r ${UNPACKDIR}/dts/myir-6254-am62x ${S}/arch/arm64/boot/dts
-	echo 'subdir-y += myir-6254-am62x' >> ${S}/arch/arm64/boot/dts/Makefile
+	cp -r ${UNPACKDIR}/dts/${MACHINE} ${S}/arch/arm64/boot/dts
+	echo 'subdir-y += ${MACHINE}' >> ${S}/arch/arm64/boot/dts/Makefile
 	
 	# I don't want to kernel to show up as 'dirty'. That's dumb.
 	rm -rf ${B}/.git 
 	rm -rf ${S}/.git 
-
 		
 	# Create the default config
 	cat ${KERNEL_CONFIG_FRAGMENTS} ${OTHER_CONFIG_FRAMENTS} > ${S}/kernel/configs/my.config
