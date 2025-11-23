@@ -3,7 +3,7 @@ diff --git a/board/ti/am62x/evm.c b/board/ti/am62x/evm.c
 index 3d924d6cbcd..d0801e6656b 100644
 --- a/board/ti/am62x/evm.c
 +++ b/board/ti/am62x/evm.c
-@@ -141,6 +141,149 @@ static void setup_serial(void)
+@@ -141,6 +141,138 @@ static void setup_serial(void)
  #endif
  
  #if CONFIG_IS_ENABLED(BOARD_LATE_INIT)
@@ -16,18 +16,7 @@ index 3d924d6cbcd..d0801e6656b 100644
 +	val = readl(WKUP_MMR0_JTAG_USER_ID);
 +	printf("@UBOOT_BOOT_DEVICE@ device\n");
 +
-+
-+	switch(val){
-+		case 0x3a08e4e1:
-+			break;
-+		case 0x3a146521:
-+			env_set("fdtfile", "@CONFIG_TI_FDT_FOLDER_PATH@/@CONFIG_DEFAULT_FDT_FILE@");
-+			break;
-+
-+		default:
-+			env_set("fdtfile", "@CONFIG_TI_FDT_FOLDER_PATH@/@CONFIG_DEFAULT_FDT_FILE@");
-+			break;
-+	}
++	env_set("fdtfile", "@CONFIG_TI_FDT_FOLDER_PATH@/@CONFIG_DEFAULT_FDT_FILE@");
 +
 +	return 0;
 +}

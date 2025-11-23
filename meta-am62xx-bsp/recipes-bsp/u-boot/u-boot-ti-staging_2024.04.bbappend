@@ -1,8 +1,8 @@
 UBOOT_PATCHES_myir-6252-am62x = "0001-binman-symlink-change-${VER}.patch \
                                  0002-autosize-name-gpio-${VER}.patch  \
                                  0003-configure-boot-env-${VER}.patch \
-                                 0004-defconfig-change-${VER}.patch \
-                                 0005-autosize-memory-${VER}.patch"
+                                 0004-defconfig-change-${VER}.patch"
+                                 
 UBOOT_PATCHES_myir-6252-am62x-k3r5 = "${UBOOT_PATCHES_myir-6252-am62x}"
 UBOOT_PATCHES_myir-6254-am62x = "${UBOOT_PATCHES_myir-6252-am62x}"
 UBOOT_PATCHES_myir-6254-am62x-k3r5 = "${UBOOT_PATCHES_myir-6252-am62x}"
@@ -10,8 +10,8 @@ UBOOT_PATCHES_myir-6254-am62x-k3r5 = "${UBOOT_PATCHES_myir-6252-am62x}"
 UBOOT_PATCHES_warp-am62x = "0001-binman-symlink-change-${VER}.patch \
                                  0002-autosize-name-gpio-${VER}.patch  \
                                  0003-configure-boot-env-${VER}.patch \
-                                 0004-defconfig-change-${VER}.patch \
-                                 0005-autosize-memory-${VER}.patch"
+                                 0004-defconfig-change-${VER}.patch"
+                                 
 UBOOT_PATCHES_warp-am62x-k3r5 = "${UBOOT_PATCHES_warp-am62x}"
 
 # Function to get patches for the current machine
@@ -64,15 +64,15 @@ python do_preprocess_patches() {
     patch_list = patches.split()
     for patch in patch_list:
         # Path to the patch file in the UNPACKDIR
-        unpack_patch_file = os.path.join(unpackdir, patch)
+        patch_file = os.path.join(unpackdir, patch)
         
         # Check if the patch file exists
-        if not os.path.exists(unpack_patch_file):
-            bb.error("Patch file not found: %s" % unpack_patch_file)
+        if not os.path.exists(patch_file):
+            bb.error("Patch file not found: %s" % patch_file)
             continue
         
         # Read the patch file from UNPACKDIR
-        with open(unpack_patch_file, 'r') as f:
+        with open(patch_file, 'r') as f:
             content = f.read()
         
         # Replace placeholders using a loop
@@ -82,8 +82,8 @@ python do_preprocess_patches() {
                 #bb.warn(f"Replacing {replace_texts[i]} with {replace_values[i]}")
         
         # Write the processed patch back to UNPACKDIR
-        #bb.warn(f"Writing patch back to {unpack_patch_file}")
-        with open(unpack_patch_file, 'w') as f:
+        #bb.warn(f"Writing patch back to {patch_file}")
+        with open(patch_file, 'w') as f:
             f.write(content)
 
     #bb.warn(f"Pre-patching done for {d.getVar('MACHINE', True)}. Check.")
@@ -154,4 +154,3 @@ python do_patch() {
 
 # Add the patch pre-processing task to the build
 addtask do_preprocess_patches before do_patch after do_unpack
-
