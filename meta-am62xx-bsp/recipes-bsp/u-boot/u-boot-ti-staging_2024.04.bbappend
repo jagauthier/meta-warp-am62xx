@@ -7,6 +7,13 @@ UBOOT_PATCHES_myir-6252-am62x-k3r5 = "${UBOOT_PATCHES_myir-6252-am62x}"
 UBOOT_PATCHES_myir-6254-am62x = "${UBOOT_PATCHES_myir-6252-am62x}"
 UBOOT_PATCHES_myir-6254-am62x-k3r5 = "${UBOOT_PATCHES_myir-6252-am62x}"
 
+UBOOT_PATCHES_warp-am62x = "0001-binman-symlink-change-${VER}.patch \
+                                 0002-autosize-name-gpio-${VER}.patch  \
+                                 0003-configure-boot-env-${VER}.patch \
+                                 0004-defconfig-change-${VER}.patch \
+                                 0005-autosize-memory-${VER}.patch"
+UBOOT_PATCHES_warp-am62x-k3r5 = "${UBOOT_PATCHES_warp-am62x}"
+
 # Function to get patches for the current machine
 def get_machine_patches(d):
     machine = d.getVar('MACHINE', True)
@@ -72,10 +79,15 @@ python do_preprocess_patches() {
         for i in range(len(replace_texts)):
             if replace_texts[i] in content and replace_values[i] is not None:
                 content = content.replace(replace_texts[i], replace_values[i])
+                #bb.warn(f"Replacing {replace_texts[i]} with {replace_values[i]}")
         
         # Write the processed patch back to UNPACKDIR
+        #bb.warn(f"Writing patch back to {unpack_patch_file}")
         with open(unpack_patch_file, 'w') as f:
             f.write(content)
+
+    #bb.warn(f"Pre-patching done for {d.getVar('MACHINE', True)}. Check.")
+    
 }
 
 # Custom do_patch function to apply patches from UNPACKDIR
@@ -97,24 +109,49 @@ python do_patch() {
         bb.warn("No patches found for machine %s" % machine)
         return
     
+    # Create a stamp file to track which machine's patches have been applied
+    stamp_file = os.path.join(srcdir, '.patches_applied_' + machine)
+    
+    # Check if patches for this machine have already been applied
+    if os.path.exists(stamp_file):
+        bb.note("Patches for machine %s already applied. Skipping." % machine)
+        return
+    
     # Process each patch file
     patch_list = patches.split()
     for patch in patch_list:
+
         # Path to the patch file in the UNPACKDIR
         patch_file = os.path.join(unpackdir, patch)
-        
+
+        #bb.warn(f"Patching {os.path.basename(patch_file)} to {srcdir}")
+
         # Check if the patch file exists
         if not os.path.exists(patch_file):
             bb.error("Patch file not found: %s" % patch_file)
             continue
         
-        # Apply the patch using the patch command
+        # Apply the patch using the patch command with --dry-run first to check if already applied
         try:
-            subprocess.check_call(['patch', '-t', '-p1', '-d', srcdir, '-i', patch_file])
+            # First check if the patch is already applied
+            result = subprocess.call(['patch', '-p1', '-d', srcdir, '-i', patch_file, '--dry-run', '--reverse'])
+            if result == 0:
+                bb.note("Patch %s already applied to %s. Skipping." % (patch, srcdir))
+                continue
+            
+            # If not already applied, apply it now
+            subprocess.check_call(['patch', '-p1', '-d', srcdir, '-i', patch_file])
         except subprocess.CalledProcessError as e:
             bb.error("Failed to apply patch %s: %s" % (patch, e))
             raise
+    
+    # Create a stamp file to indicate patches for this machine have been applied
+    with open(stamp_file, 'w') as f:
+        f.write("Patches for machine %s applied\n" % machine)
+    
+    #bb.warn(f"Patching done for {d.getVar('MACHINE', True)}. Check.")
 }
 
 # Add the patch pre-processing task to the build
 addtask do_preprocess_patches before do_patch after do_unpack
+
