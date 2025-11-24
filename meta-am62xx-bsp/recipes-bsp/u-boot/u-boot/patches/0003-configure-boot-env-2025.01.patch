@@ -1,0 +1,46 @@
+Upstream-Status: Pending
+diff --git a/board/ti/am62x/evm.c b/board/ti/am62x/evm.c
+index c45134fd023..12d8d461ed9 100644
+--- a/board/ti/am62x/evm.c
++++ b/board/ti/am62x/evm.c
+@@ -128,6 +128,32 @@ int checkboard(void)
+ }
+ 
+ #if CONFIG_IS_ENABLED(BOARD_LATE_INIT)
++
++int setup_default_dts(void)
++{
++	printf("@UBOOT_BOOT_DEVICE@ device\n");
++   env_set("fdtfile", "@CONFIG_TI_FDT_FOLDER_PATH@/@CONFIG_DEFAULT_FDT_FILE@");
++	return 0;
++}
++
++void set_boot_environment(void)
++{
++	u32 boot_device = get_boot_device();
++	switch (boot_device) {
++	case BOOT_DEVICE_MMC1:
++		printf("Current device is EMMC.\n");
++		env_set_ulong("mmcdev", 0);
++		env_set("bootpart", "0:2");
++		break;
++	case BOOT_DEVICE_MMC2:
++	    printf("Current device is SD card.\n");
++		env_set_ulong("mmcdev", 1);
++		env_set("bootpart", "1:2");
++		break;
++	};
++      setup_default_dts();
++}
++
+ static void setup_board_eeprom_env(void)
+ {
+ 	char *name = "am62x_skevm";
+@@ -184,6 +210,7 @@ int board_late_init(void)
+ 	}
+ 
+ 	ti_set_fdt_env(NULL, NULL);
++	set_boot_environment();
+ 	return 0;
+ }
+ #endif

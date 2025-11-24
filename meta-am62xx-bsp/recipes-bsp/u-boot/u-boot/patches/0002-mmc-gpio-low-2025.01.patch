@@ -1,0 +1,14 @@
+Upstream-Status: Pending
+diff --git a/dts/upstream/src/arm64/ti/k3-am62x-sk-common.dtsi b/dts/upstream/src/arm64/ti/k3-am62x-sk-common.dtsi
+index 6c1ab25514e..79b10b51e71 100644
+--- a/dts/upstream/src/arm64/ti/k3-am62x-sk-common.dtsi
++++ b/dts/upstream/src/arm64/ti/k3-am62x-sk-common.dtsi
+@@ -149,7 +149,7 @@
+ 		regulator-boot-on;
+ 		enable-active-high;
+ 		vin-supply = <&vcc_3v3_sys>;
+-		gpio = <&exp1 3 GPIO_ACTIVE_HIGH>;
++		/*gpio = <&exp1 3 GPIO_ACTIVE_HIGH>;*/
+ 	};
+ 
+ 	leds {

@@ -9,7 +9,6 @@ do_compile:prepend () {
 
 PATCHSTAMP = "${@time.time()}"
 
-
 UBOOT_SUFFIX ?= "img"
 SPL_BINARY ?= "MLO"
 
