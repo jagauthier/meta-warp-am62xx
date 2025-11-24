@@ -7,6 +7,9 @@ do_compile:prepend () {
     #echo ${scm_version} > ${S}/.scmversion
 }
 
+PATCHSTAMP = "${@time.time()}"
+
+
 UBOOT_SUFFIX ?= "img"
 SPL_BINARY ?= "MLO"
 

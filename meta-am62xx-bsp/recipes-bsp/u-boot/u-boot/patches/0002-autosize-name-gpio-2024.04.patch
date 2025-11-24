@@ -1,0 +1,36 @@
+Upstream-Status: Pending
+diff --git a/arch/arm/dts/k3-am625-sk.dts b/arch/arm/dts/k3-am625-sk.dts
+index 5ca722aec43..34da78c7fe4 100644
+--- a/arch/arm/dts/k3-am625-sk.dts
++++ b/arch/arm/dts/k3-am625-sk.dts
+@@ -11,7 +11,7 @@
+ 
+ / {
+ 	compatible = "ti,am625-sk", "ti,am625";
+-	model = "Texas Instruments AM625 SK";
++	model = "@UBOOT_BOOT_DEVICE@ AM625";
+ 
+ 	opp-table {
+ 		/* Add 1.4GHz OPP for am625-sk board. Requires VDD_CORE to be at 0.85V */
+@@ -24,9 +24,9 @@
+ 
+ 	memory@80000000 {
+ 		device_type = "memory";
+-		/* 2G RAM */
+-		reg = <0x00000000 0x80000000 0x00000000 0x80000000>;
+-
++		/* @MEMORY_TEXT_SIZE@ */
++		reg = @MEMORY_SIZE@;
++		auto-size;
+ 	};
+ 
+ 	vmain_pd: regulator-0 {
+@@ -74,7 +74,7 @@
+ 		regulator-boot-on;
+ 		enable-active-high;
+ 		vin-supply = <&vcc_3v3_sys>;
+-		gpio = <&exp1 3 GPIO_ACTIVE_HIGH>;
++		/*gpio = <&exp1 3 GPIO_ACTIVE_HIGH>;*/
+ 	};
+ 
+ 	vdd_sd_dv: regulator-4 {

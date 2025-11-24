@@ -82,11 +82,11 @@ index 3d924d6cbcd..4d6e47893b7 100644
 +		case 0x3a08e4e1:
 +			break;
 +		case 0x3a146521:
-+			env_set("fdtfile", "warp/warp-6252.dtb");
++			env_set("fdtfile", "myir-6254-am62x/myir-6254-am62x-6252.dtb");
 +			break;
 +
 +		default:
-+			env_set("fdtfile", "warp/warp-6254.dtb");
++			env_set("fdtfile", "myir-6254-am62x/myir-6254-am62x-6254.dtb");
 +			break;
 +	}
 +	
@@ -232,8 +232,8 @@ index 644989b1eae..10fe42e9345 100644
  CONFIG_DM_GPIO=y
  CONFIG_SPL_DM_SPI=y
  CONFIG_DEFAULT_DEVICE_TREE="k3-am625-sk"
-+CONFIG_DEFAULT_FDT_FILE="warp-625x.dtb"
-+CONFIG_TI_FDT_FOLDER_PATH="warp"
++CONFIG_DEFAULT_FDT_FILE="myir-6254-am62x-625x.dtb"
++CONFIG_TI_FDT_FOLDER_PATH="myir-6254-am62x"
  CONFIG_SPL_TEXT_BASE=0x80080000
  CONFIG_OF_LIBFDT_OVERLAY=y
  CONFIG_DM_RESET=y
