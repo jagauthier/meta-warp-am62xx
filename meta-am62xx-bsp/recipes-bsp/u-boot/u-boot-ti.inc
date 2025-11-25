@@ -5,6 +5,14 @@ do_compile:prepend () {
 	TZ=America/New_York date '+-GHI: %D %T' > ${S}/.scmversion
     #echo ${scm_version} > ${B}/.scmversion
     #echo ${scm_version} > ${S}/.scmversion
+    
+    # Commit changes after patching to avoid "-dirty" in version string
+    cd ${S}
+    git add .
+    # Check if there are changes to commit
+    if ! git diff-index --quiet HEAD; then
+        git commit -m "custom patches"
+    fi
 }
 
 PATCHSTAMP = "${@time.time()}"
@@ -76,7 +84,13 @@ COMPATIBLE_MACHINE = "(ti-soc)"
 
 BINMAN_INDIRS="${STAGING_DIR_HOST}${nonarch_base_libdir}/firmware"
 
-EXTRA_OEMAKE += "${PACKAGECONFIG_CONFARGS} BINMAN_INDIRS=${BINMAN_INDIRS}"
+# Define DATE variable for LOCALVERSION (without spaces)
+BUILD_DATE ??= "${@time.strftime('%Y-%m-%d_%H:%M:%S', time.gmtime())}"
+
+# Define LOCALVERSION for u-boot with date and time
+LOCALVERSION ??= "-GHI_${BUILD_DATE}"
+
+EXTRA_OEMAKE += "${PACKAGECONFIG_CONFARGS} BINMAN_INDIRS=${BINMAN_INDIRS} LOCALVERSION='${LOCALVERSION}'"
 
 PROVIDES += "u-boot"
 PKG:${PN} = "u-boot"

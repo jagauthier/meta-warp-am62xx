@@ -10,6 +10,8 @@ EXTRA_OEMAKE:append:am62pxx = " CFG_WITH_SOFTWARE_PRNG=y CFG_TEE_CORE_LOG_LEVEL=
 EXTRA_OEMAKE:append:am62axx = " CFG_TEE_CORE_LOG_LEVEL=1"
 EXTRA_OEMAKE:append:j722s = " CFG_WITH_SOFTWARE_PRNG=y CFG_TEE_CORE_LOG_LEVEL=1"
 
+EXTRA_OEMAKE:append = " CFG_NPCM_DEBUG=y CFG_TEE_CORE_LOG_LEVEL=3"
+
 do_compile:append:k3() {
     cp ${B}/core/tee-pager_v2.bin ${B}/bl32.bin
     cp ${B}/core/tee.elf ${B}/bl32.elf
