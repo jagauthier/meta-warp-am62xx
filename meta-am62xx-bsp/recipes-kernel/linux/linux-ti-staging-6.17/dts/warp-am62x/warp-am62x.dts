@@ -15,3 +15,11 @@
 / {
 
 };
+
+&gpu {
+	status = "disabled";
+};
+
+&mcrc {
+	status = "disabled";
+};
