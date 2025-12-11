@@ -208,6 +208,7 @@
 		>;
 	};
 
+	
 };
 
 &main_pmx0 {
@@ -341,6 +342,11 @@
 		>;
 	};
 
+	main_gpio_pins: main-gpio-pins {
+			pinctrl-single,pins = <
+				AM62X_IOPAD(0x0004, PIN_INPUT, 7) /* (G25) OSPI0_LBCLKO.GPIO0_1 */
+			>;
+		};
 };
 
 
@@ -378,7 +384,7 @@
 &main_uart4 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&main_uart4_pins_default>;
-  rts-gpios = <&main_gpio0 12 GPIO_ACTIVE_HIGH>;
+    rts-gpios = <&main_gpio0 12 GPIO_ACTIVE_HIGH>;
 	rs485-rx-during-tx;
 	rs485-rts-delay = <1 1>;
 	linux,rs485-enabled-at-boot-time;
