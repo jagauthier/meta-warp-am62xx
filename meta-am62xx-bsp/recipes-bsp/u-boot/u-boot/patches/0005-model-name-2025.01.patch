@@ -1,6 +1,6 @@
 Upstream-Status: Pending
 diff --git a/dts/upstream/src/arm64/ti/k3-am625-sk.dts b/dts/upstream/src/arm64/ti/k3-am625-sk.dts
-index b1161e688bf..60b7ac33b82 100644
+index b1161e688bf..241fbbb859e 100644
 --- a/dts/upstream/src/arm64/ti/k3-am625-sk.dts
 +++ b/dts/upstream/src/arm64/ti/k3-am625-sk.dts
 @@ -14,7 +14,7 @@
@@ -8,7 +8,18 @@ index b1161e688bf..60b7ac33b82 100644
  / {
  	compatible = "ti,am625-sk", "ti,am625";
 -	model = "Texas Instruments AM625 SK";
-+	model = "@UBOOT_BOOT_DEVICE@ AM625";
++	model = "@UBOOT_BOOT_DEVICE@";
  
  	opp-table {
  		/* Add 1.4GHz OPP for am625-sk board. Requires VDD_CORE to be at 0.85V */
+@@ -28,8 +28,8 @@
+ 	memory@80000000 {
+ 		bootph-pre-ram;
+ 		device_type = "memory";
+-		/* 2G RAM */
+-		reg = <0x00000000 0x80000000 0x00000000 0x80000000>;
++		/* @MEMORY_TEXT_SIZE@ */
++		reg = @MEMORY_SIZE@;
+ 
+ 	};
+ 
