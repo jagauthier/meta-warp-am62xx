@@ -47,8 +47,8 @@ KERNEL_GIT_PROTOCOL ?= "https"
 
 SRC_URI += "${KERNEL_GIT_URI};protocol=${KERNEL_GIT_PROTOCOL};branch=${BRANCH} \
 			file://configs/ \
-			file://dts/myir-6254-am62x/"
-			
+			${@ 'file://dts/${MACHINE}/' if d.getVar('KERNEL_DEVICETREE') else ''}"
+
 
 # Special configuration for remoteproc/rpmsg IPC modules
 module_conf_rpmsg_client_sample = "blacklist rpmsg_client_sample"

@@ -27,3 +27,8 @@
 &main_rti3{
 	status = "disabled";
 };
+
+&gpu {
+	status = "okay";
+	memory-region = <&gpu_memory_region>;
+};

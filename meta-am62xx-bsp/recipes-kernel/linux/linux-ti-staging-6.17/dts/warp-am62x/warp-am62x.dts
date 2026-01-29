@@ -16,10 +16,11 @@
 
 };
 
-&gpu {
+&mcrc {
 	status = "disabled";
 };
 
-&mcrc {
-	status = "disabled";
+&gpu {
+	status = "okay";
+	memory-region = <&gpu_memory_region>;
 };

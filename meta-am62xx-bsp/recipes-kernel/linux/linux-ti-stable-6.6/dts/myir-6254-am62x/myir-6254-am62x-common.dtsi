@@ -62,8 +62,6 @@
 			pmsg-size = <0x8000>;
 		};
 
-
-
 		rtos_ipc_memory_region: ipc-memories@9c800000 {
 			compatible = "shared-dma-pool";
 			reg = <0x00 0x9c800000 0x00 0x00300000>;
@@ -113,6 +111,12 @@
 
 		framebuffer: framebuffer@ff700000 {
 			reg = <0x00 0xff700000 0x00 0x008ca000>;
+			no-map;
+		};
+
+		gpu_memory_region: gpu-memory@90000000 {
+			compatible = "shared-dma-pool";
+			reg = <0x00 0x90000000 0x00 0x01000000>;
 			no-map;
 		};
 	};
@@ -232,6 +236,7 @@
 		compatible = "hdmi-connector";
 		label = "hdmi";
 		type = "a";
+		status = "disabled";
 		port {
 			hdmi_connector_in: endpoint {
 				remote-endpoint = <&sii9022_out>;
@@ -284,6 +289,7 @@
 	leds {
 		compatible = "gpio-leds";
 
+		/* led-user disabled - depends on at9555 GPIO expander on main_i2c1 */
 		led-user {
 			label = "am62-sk:d54";
 			gpios = <&at9555 4 GPIO_ACTIVE_LOW>;
@@ -291,6 +297,7 @@
 			linux,default-trigger = "heartbeat";
 			function = LED_FUNCTION_HEARTBEAT;
 			default-state = "off";
+			status = "disabled";
 		};
 
 		led-sys {
@@ -676,42 +683,6 @@
 	pinctrl-0 = <&main_i2c0_pins_default>;
 	clock-frequency = <100000>;
 	status = "okay";
-	
-		sii9022: sii9022@3b {
-		#sound-dai-cells = <0>;
-		compatible = "sil,sii9022";
-		reg = <0x3b>;
-		status = "okay";
-		iovcc-supply = <&vcc_3v3_sys>;
-		cvcc12-supply = <&vcc_1v8>;
-	
-		reset-gpios = <&at9555 1 GPIO_ACTIVE_LOW>;
-
-  
-
-		sil,i2s-data-lanes = < 0 >;
-
-		ports {
-			#address-cells = <1>;
-			#size-cells = <0>;
-
-			port@0 {
-				reg = <0>;
-
-				sii9022_in: endpoint {
-					remote-endpoint = <&dpi1_out>;
-				};
-			};
-
-			port@1 {
-				reg = <1>;
-
-				sii9022_out: endpoint {
-					remote-endpoint = <&hdmi_connector_in>;
-				};
-			};
-		};
-	};
 
 	sgtl5000: audio-codec@a {
 		compatible = "fsl,sgtl5000";
@@ -762,6 +733,40 @@
 		interrupt-controller;
 		#interrupt-cells = <2>;
 		status = "okay";
+	};
+
+	sii9022: sii9022@3b {
+		#sound-dai-cells = <0>;
+		compatible = "sil,sii9022";
+		reg = <0x3b>;
+		status = "disabled";
+		iovcc-supply = <&vcc_3v3_sys>;
+		cvcc12-supply = <&vcc_1v8>;
+
+		/* reset-gpios removed - at9555 GPIO expander not available during early probe */
+
+		sil,i2s-data-lanes = < 0 >;
+
+		ports {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			port@0 {
+				reg = <0>;
+
+				sii9022_in: endpoint {
+					remote-endpoint = <&dpi1_out>;
+				};
+			};
+
+			port@1 {
+				reg = <1>;
+
+				sii9022_out: endpoint {
+					remote-endpoint = <&hdmi_connector_in>;
+				};
+			};
+		};
 	};
 };
 
@@ -956,9 +961,10 @@
 
 &dss_ports {
 	status = "okay";
-	/* VP2: DPI Output */
+	/* VP2: DPI Output - disabled due to sii9022 probe issues */
 	port@1 {
 		reg = <1>;
+		status = "disabled";
 
 		dpi1_out: endpoint {
 			remote-endpoint = <&sii9022_in>;

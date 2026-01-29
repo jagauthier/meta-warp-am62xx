@@ -15,3 +15,8 @@
 / {
 
 };
+
+&gpu {
+	status = "okay";
+	memory-region = <&gpu_memory_region>;
+};

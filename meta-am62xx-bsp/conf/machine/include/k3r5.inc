@@ -15,6 +15,10 @@ PREFERRED_PROVIDER_virtual/kernel = "linux-dummy"
 PREFERRED_PROVIDER_virtual/bootloader = "u-boot-ti-staging"
 PREFERRED_PROVIDER_u-boot = "u-boot-ti-staging"
 
+# Clear any version preference for linux-ti-staging to prevent parsing errors
+# when main machine sets PREFERRED_VERSION_linux-ti-staging
+PREFERRED_VERSION_linux-ti-staging = ""
+
 SPL_SUFFIX = "bin"
 SPL_BINARY = "tiboot3-${SYSFW_SOC}-${SYSFW_SUFFIX}-${SYSFW_CONFIG}.${SPL_SUFFIX}"
 SPL_SYMLINK = "tiboot3.${SPL_SUFFIX}"
